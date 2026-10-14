@@ -1,0 +1,947 @@
+/**
+ * Enterprise Database Engine & Realistic Seed Data
+ * منصة عقار — الإصدار الرابع
+ */
+
+import {
+  UserAccount,
+  Organization,
+  OrgMembership,
+  Property,
+  Listing,
+  ListingStatusHistory,
+  Project,
+  ProjectUnit,
+  Favorite,
+  SavedSearch,
+  ReportCase,
+  SupportTicket,
+  PromotionPackage,
+  PaymentOrder,
+  Invoice,
+  Refund,
+  AuditEvent,
+  SystemSettings,
+  MarketIndicator,
+} from '../types/database';
+
+class InMemoryDatabase {
+  public settings: SystemSettings;
+  public users: Map<string, UserAccount> = new Map();
+  public organizations: Map<string, Organization> = new Map();
+  public orgMemberships: Map<string, OrgMembership> = new Map();
+  public properties: Map<string, Property> = new Map();
+  public listings: Map<string, Listing> = new Map();
+  public listingHistory: ListingStatusHistory[] = [];
+  public projects: Map<string, Project> = new Map();
+  public projectUnits: Map<string, ProjectUnit> = new Map();
+  public favorites: Favorite[] = [];
+  public savedSearches: SavedSearch[] = [];
+  public reports: Map<string, ReportCase> = new Map();
+  public tickets: Map<string, SupportTicket> = new Map();
+  public promotionPackages: PromotionPackage[] = [];
+  public paymentOrders: Map<string, PaymentOrder> = new Map();
+  public invoices: Map<string, Invoice> = new Map();
+  public refunds: Map<string, Refund> = new Map();
+  public auditEvents: AuditEvent[] = [];
+  public marketIndicators: MarketIndicator[] = [];
+
+  constructor() {
+    this.settings = {
+      platformName: 'منصة عقار',
+      platformSubtitle: 'بوابتك الرقمية الشاملة للعقارات والمشاريع المعتمدة في المملكة',
+      logoText: 'عقار',
+      primaryColor: '#059669', // Emerald Green
+      secondaryColor: '#0284c7', // Sky Blue
+      vatRate: 0.15,
+      currency: 'SAR',
+      supportPhone: '920001234',
+      supportEmail: 'care@aqqar-sa.com',
+      regaLicenseNote: 'مرخصة ومعتمدة من الهيئة العامة للعقار برقم ترخيص: 1200004589',
+      allowVisitorReports: true,
+    };
+
+    this.seedDatabase();
+  }
+
+  // --- Seed Data ---
+  private seedDatabase() {
+    // 1. Users across all 10 roles
+    const seedUsers: UserAccount[] = [
+      {
+        id: 'usr_reg_1',
+        phone: '+966501112233',
+        email: 'ahmed@example.com',
+        fullName: 'أحمد بن فهد الدوسري',
+        role: 'registered_user',
+        status: 'active',
+        nationalIdMasked: '1088****91',
+        avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
+        createdAt: '2026-01-10T10:00:00Z',
+        updatedAt: '2026-01-10T10:00:00Z',
+      },
+      {
+        id: 'usr_adv_1',
+        phone: '+966552223344',
+        email: 'saud@example.com',
+        fullName: 'سعود بن عبدالملك العتيبي',
+        role: 'individual_advertiser',
+        status: 'active',
+        falLicenseNumber: '1100023451',
+        nationalIdMasked: '1074****82',
+        avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150',
+        createdAt: '2026-01-15T12:00:00Z',
+        updatedAt: '2026-01-15T12:00:00Z',
+      },
+      {
+        id: 'usr_mgr_1',
+        phone: '+966543334455',
+        email: 'khaled@arkan.com',
+        fullName: 'خالد بن عبدالعزيز الشمري',
+        role: 'org_manager',
+        status: 'active',
+        falLicenseNumber: '1200055412',
+        orgId: 'org_arkan_1',
+        nationalIdMasked: '1065****44',
+        avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150',
+        createdAt: '2026-01-05T09:00:00Z',
+        updatedAt: '2026-01-05T09:00:00Z',
+      },
+      {
+        id: 'usr_brk_1',
+        phone: '+966564445566',
+        email: 'tariq@arkan.com',
+        fullName: 'طارق بن ناصر المطيري',
+        role: 'authorized_broker',
+        status: 'active',
+        falLicenseNumber: '1100098765',
+        orgId: 'org_arkan_1',
+        nationalIdMasked: '1091****19',
+        avatarUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150',
+        createdAt: '2026-01-18T14:00:00Z',
+        updatedAt: '2026-01-18T14:00:00Z',
+      },
+      {
+        id: 'usr_mod_1',
+        phone: '+966575556677',
+        email: 'mona.mod@aqqar.local',
+        fullName: 'منى بنت سليمان التميمي',
+        role: 'content_moderator',
+        status: 'active',
+        nationalIdMasked: '1055****33',
+        avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150',
+        createdAt: '2026-01-01T08:00:00Z',
+        updatedAt: '2026-01-01T08:00:00Z',
+      },
+      {
+        id: 'usr_cmp_1',
+        phone: '+966586667788',
+        email: 'faisal.comp@aqqar.local',
+        fullName: 'فيصل بن إبراهيم القحطاني',
+        role: 'compliance_officer',
+        status: 'active',
+        nationalIdMasked: '1044****21',
+        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+        createdAt: '2026-01-01T08:00:00Z',
+        updatedAt: '2026-01-01T08:00:00Z',
+      },
+      {
+        id: 'usr_sup_1',
+        phone: '+966597778899',
+        email: 'reem.support@aqqar.local',
+        fullName: 'ريم بنت عبدالله العمري',
+        role: 'support_officer',
+        status: 'active',
+        nationalIdMasked: '1033****77',
+        avatarUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150',
+        createdAt: '2026-01-01T08:00:00Z',
+        updatedAt: '2026-01-01T08:00:00Z',
+      },
+      {
+        id: 'usr_fin_1',
+        phone: '+966538889900',
+        email: 'majed.fin@aqqar.local',
+        fullName: 'ماجد بن صالح الزهراني',
+        role: 'financial_officer',
+        status: 'active',
+        nationalIdMasked: '1022****99',
+        avatarUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=150',
+        createdAt: '2026-01-01T08:00:00Z',
+        updatedAt: '2026-01-01T08:00:00Z',
+      },
+      {
+        id: 'usr_adm_1',
+        phone: '+966509990011',
+        email: 'admin@aqqar.local',
+        fullName: 'عبدالرحمن بن حمود الحربي',
+        role: 'system_admin',
+        status: 'active',
+        nationalIdMasked: '1011****12',
+        avatarUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150',
+        createdAt: '2026-01-01T08:00:00Z',
+        updatedAt: '2026-01-01T08:00:00Z',
+      },
+    ];
+
+    seedUsers.forEach((u) => this.users.set(u.id, u));
+
+    // 2. Organization: شركة أركان العقارية
+    const orgArkan: Organization = {
+      id: 'org_arkan_1',
+      name: 'شركة أركان العقارية المحدودة',
+      commercialRecord: '1010789456',
+      falOrgLicense: '1200055412',
+      managerUserId: 'usr_mgr_1',
+      status: 'active',
+      city: 'الرياض',
+      phone: '+966114567890',
+      email: 'info@arkan.com',
+      logoUrl: 'https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=150',
+      createdAt: '2026-01-05T09:00:00Z',
+    };
+    this.organizations.set(orgArkan.id, orgArkan);
+
+    // Membership
+    const mem1: OrgMembership = {
+      id: 'mem_1',
+      orgId: 'org_arkan_1',
+      userId: 'usr_brk_1',
+      userName: 'طارق بن ناصر المطيري',
+      userPhone: '+966564445566',
+      roleInOrg: 'broker',
+      invitationStatus: 'accepted',
+      scopeLimitations: 'شمال الرياض - إعلانات الفلل والشقق السكنية',
+      invitedAt: '2026-01-18T14:00:00Z',
+      joinedAt: '2026-01-19T10:00:00Z',
+    };
+    this.orgMemberships.set(mem1.id, mem1);
+
+    // 3. Properties and Listings
+    const seedListings: Array<{ prop: Property; list: Listing }> = [
+      {
+        prop: {
+          id: 'prp_1',
+          city: 'الرياض',
+          district: 'الملقا',
+          propertyType: 'villa',
+          totalAreaSqm: 450,
+          latitude: 24.805,
+          longitude: 46.612,
+          addressDescription: 'شمال الرياض، بالقرب من طريق أنس بن مالك وطريق الملك فهد',
+          deedNumber: '310104005891',
+        },
+        list: {
+          id: 'lst_1',
+          propertyId: 'prp_1',
+          property: null as any,
+          ownerId: 'usr_adv_1',
+          ownerName: 'سعود بن عبدالملك العتيبي',
+          ownerPhone: '+966552223344',
+          title: 'فيلا مودرن فاخرة مع مسبح ومصعد بحي الملقا',
+          description:
+            'فيلا بتصميم معماري حديث وتشطيبات فندقية راقية، تتكون من درج صالة ومصعد مؤسس، مسبح خاص، غرفة سائق، جناح نوم رئيسي مع غرفة ملابس فاخرة، وتكييف مخفي بالكامل.',
+          purpose: 'sale',
+          price: 5200000,
+          currency: 'SAR',
+          roomsCount: 6,
+          bathroomsCount: 7,
+          floorNumber: 3,
+          buildingAgeYears: 1,
+          facade: 'شمالية شرقية',
+          streetWidthM: 20,
+          features: ['مسبح', 'مصعد', 'غرفة خادمة', 'غرفة سائق', 'تكييف مركزي', 'موقف سيارات', 'شرفة واسعة'],
+          adLicenseNumber: '7100045612',
+          licenseVerificationStatus: 'verified',
+          status: 'published',
+          isFeatured: true,
+          featuredExpiresAt: '2026-11-20T00:00:00Z',
+          viewsCount: 2430,
+          favoritesCount: 88,
+          publishedAt: '2026-02-01T10:00:00Z',
+          expiresAt: '2026-05-01T10:00:00Z',
+          media: [
+            {
+              id: 'med_1_1',
+              listingId: 'lst_1',
+              mediaType: 'image',
+              url: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1200&q=80',
+              isPrimary: true,
+              title: 'الواجهة الخارجية للفيلا',
+            },
+            {
+              id: 'med_1_2',
+              listingId: 'lst_1',
+              mediaType: 'image',
+              url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80',
+              isPrimary: false,
+              title: 'صالة الاستقبال الرئيسية',
+            },
+            {
+              id: 'med_1_3',
+              listingId: 'lst_1',
+              mediaType: 'image',
+              url: 'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?w=1200&q=80',
+              isPrimary: false,
+              title: 'المطبخ العصري المجهز',
+            },
+          ],
+          createdAt: '2026-01-25T11:00:00Z',
+          updatedAt: '2026-02-01T10:00:00Z',
+        },
+      },
+      {
+        prop: {
+          id: 'prp_2',
+          city: 'الرياض',
+          district: 'النرجس',
+          propertyType: 'apartment',
+          totalAreaSqm: 165,
+          latitude: 24.842,
+          longitude: 46.685,
+          addressDescription: 'حي النرجس الكيلو الثاني، قريب من طريق عثمان بن عفان ومحطة المترو',
+          deedNumber: '310104009942',
+        },
+        list: {
+          id: 'lst_2',
+          propertyId: 'prp_2',
+          property: null as any,
+          ownerId: 'usr_brk_1',
+          ownerName: 'طارق بن ناصر المطيري',
+          ownerPhone: '+966564445566',
+          orgId: 'org_arkan_1',
+          orgName: 'شركة أركان العقارية المحدودة',
+          title: 'شقة سكنية مؤثثة بالكامل للإيجار السنوي بحي النرجس',
+          description:
+            'شقة عصرية في مجمع سكني ذكي ومغلق، مزودة بنظام الدخول الذكي، تتكون من 3 غرف نوم وصالة واسعة ومطبخ أمريكي مفتوح وبلكونة مطلة على حديقة المجمع.',
+          purpose: 'rent',
+          rentPeriod: 'yearly',
+          price: 78000,
+          currency: 'SAR',
+          roomsCount: 3,
+          bathroomsCount: 3,
+          floorNumber: 2,
+          buildingAgeYears: 0,
+          facade: 'غربية',
+          streetWidthM: 15,
+          features: ['مفروشة بالكامل', 'دخول ذكي', 'موقف خاص', 'مصعد', 'حراسة أمنية 24/7', 'صالة رياضية مشتركة'],
+          adLicenseNumber: '7100088914',
+          licenseVerificationStatus: 'verified',
+          status: 'published',
+          isFeatured: true,
+          featuredExpiresAt: '2026-11-15T00:00:00Z',
+          viewsCount: 1820,
+          favoritesCount: 65,
+          publishedAt: '2026-02-10T12:00:00Z',
+          expiresAt: '2026-05-10T12:00:00Z',
+          media: [
+            {
+              id: 'med_2_1',
+              listingId: 'lst_2',
+              mediaType: 'image',
+              url: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=1200&q=80',
+              isPrimary: true,
+              title: 'صالة المعيشة للشقة',
+            },
+            {
+              id: 'med_2_2',
+              listingId: 'lst_2',
+              mediaType: 'image',
+              url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200&q=80',
+              isPrimary: false,
+              title: 'غرفة النوم الرئيسية',
+            },
+          ],
+          createdAt: '2026-02-05T09:00:00Z',
+          updatedAt: '2026-02-10T12:00:00Z',
+        },
+      },
+      {
+        prop: {
+          id: 'prp_3',
+          city: 'جدة',
+          district: 'الشاطئ',
+          propertyType: 'villa',
+          totalAreaSqm: 620,
+          latitude: 21.595,
+          longitude: 39.112,
+          addressDescription: 'جدة، حي الشاطئ راقي بالقرب من الكورنيش الشمالي وبرج جدة',
+          deedNumber: '420108871234',
+        },
+        list: {
+          id: 'lst_3',
+          propertyId: 'prp_3',
+          property: null as any,
+          ownerId: 'usr_adv_1',
+          ownerName: 'سعود بن عبدالملك العتيبي',
+          ownerPhone: '+966552223344',
+          title: 'قصر مصغر بإطلالة بحرية وتشطيبات فائقة الفخامة بحي الشاطئ',
+          description:
+            'فيلا قصر بتصميم نيو كلاسيكي فاخر، أسقف مرتفعة، حديقة منسقة بنظام ري ذكي، مسبح خارجي مدفأ، قبو متعدد الاستخدامات، ومطبخين داخلي وخارجي.',
+          purpose: 'sale',
+          price: 9800000,
+          currency: 'SAR',
+          roomsCount: 7,
+          bathroomsCount: 9,
+          floorNumber: 3,
+          buildingAgeYears: 2,
+          facade: 'شمالية',
+          streetWidthM: 25,
+          features: ['إطلالة بحرية', 'مسبح مدفأ', 'مصعد بانورامي', 'قبو', 'غرف خدم وسائقين', 'كاميرات مراقبة'],
+          adLicenseNumber: '7100063211',
+          licenseVerificationStatus: 'verified',
+          status: 'published',
+          isFeatured: false,
+          viewsCount: 3120,
+          favoritesCount: 142,
+          publishedAt: '2026-01-20T15:00:00Z',
+          expiresAt: '2026-04-20T15:00:00Z',
+          media: [
+            {
+              id: 'med_3_1',
+              listingId: 'lst_3',
+              mediaType: 'image',
+              url: 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200&q=80',
+              isPrimary: true,
+              title: 'الواجهة النيوكلاسيكية',
+            },
+            {
+              id: 'med_3_2',
+              listingId: 'lst_3',
+              mediaType: 'image',
+              url: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1200&q=80',
+              isPrimary: false,
+              title: 'المسبح والحديقة الخلفية',
+            },
+          ],
+          createdAt: '2026-01-18T10:00:00Z',
+          updatedAt: '2026-01-20T15:00:00Z',
+        },
+      },
+      {
+        prop: {
+          id: 'prp_4',
+          city: 'الخبر',
+          district: 'الحزام الذهبي',
+          propertyType: 'apartment',
+          totalAreaSqm: 210,
+          latitude: 26.295,
+          longitude: 50.21,
+          addressDescription: 'الخبر - الحزام الذهبي، بالقرب من مجمع الراشد ومستشفى سعد',
+          deedNumber: '530101112233',
+        },
+        list: {
+          id: 'lst_4',
+          propertyId: 'prp_4',
+          property: null as any,
+          ownerId: 'usr_brk_1',
+          ownerName: 'طارق بن ناصر المطيري',
+          ownerPhone: '+966564445566',
+          orgId: 'org_arkan_1',
+          orgName: 'شركة أركان العقارية المحدودة',
+          title: 'شقة فاخرة تمليك بتراس خاص وموقع استراتيجي بالخبر',
+          description:
+            'شقة دور كامل بإطلالة مفتوحة وتراس واسع 40م، تشطيب ديلوكس، ارضيات رخام اسباني، مجلس رجال مستقل، وصالة عائلية واسعة.',
+          purpose: 'sale',
+          price: 1150000,
+          currency: 'SAR',
+          roomsCount: 4,
+          bathroomsCount: 4,
+          floorNumber: 4,
+          buildingAgeYears: 0,
+          facade: 'شرقية',
+          streetWidthM: 20,
+          features: ['تراس واسع', 'موقف قبو خاص', 'مصعد ميتسوبيشي', 'عداد مياه وكهرباء مستقل', 'ضمانات إنشائية 10 سنوات'],
+          adLicenseNumber: '7100094523',
+          licenseVerificationStatus: 'verified',
+          status: 'published',
+          isFeatured: false,
+          viewsCount: 950,
+          favoritesCount: 38,
+          publishedAt: '2026-02-15T09:00:00Z',
+          expiresAt: '2026-05-15T09:00:00Z',
+          media: [
+            {
+              id: 'med_4_1',
+              listingId: 'lst_4',
+              mediaType: 'image',
+              url: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1200&q=80',
+              isPrimary: true,
+              title: 'صالة الشقة الفسيحة',
+            },
+          ],
+          createdAt: '2026-02-14T08:00:00Z',
+          updatedAt: '2026-02-15T09:00:00Z',
+        },
+      },
+      {
+        prop: {
+          id: 'prp_5',
+          city: 'الرياض',
+          district: 'حطين',
+          propertyType: 'building',
+          totalAreaSqm: 1200,
+          latitude: 24.77,
+          longitude: 46.595,
+          addressDescription: 'حي حطين النموذجي، بالقرب من بوليفارد رياض سيتي',
+          deedNumber: '310107788441',
+        },
+        list: {
+          id: 'lst_5',
+          propertyId: 'prp_5',
+          property: null as any,
+          ownerId: 'usr_mgr_1',
+          ownerName: 'خالد بن عبدالعزيز الشمري',
+          ownerPhone: '+966543334455',
+          orgId: 'org_arkan_1',
+          orgName: 'شركة أركان العقارية المحدودة',
+          title: 'عمارة تجارية سكنية جديدة بدخل استثماري متوقع 9% بحطين',
+          description:
+            'مبنى حديث مكون من 4 معارض تجارية ميزانين و 12 شقة استوديو وشقق عائلية، مجهز بأحدث اشتراطات الدفاع المدني وكاميرات المراقبة ومواقف سيارات كافية.',
+          purpose: 'sale',
+          price: 24500000,
+          currency: 'SAR',
+          roomsCount: 20,
+          bathroomsCount: 18,
+          floorNumber: 4,
+          buildingAgeYears: 0,
+          facade: 'تجاري غربي',
+          streetWidthM: 36,
+          features: ['معارض تجارية', 'شقق مفروشة', 'مواقف عمودية', 'مصعدين', 'نظام إطفاء مركزي', 'دخل استثماري ممتاز'],
+          adLicenseNumber: '7100019284',
+          licenseVerificationStatus: 'verified',
+          status: 'published',
+          isFeatured: true,
+          featuredExpiresAt: '2026-11-25T00:00:00Z',
+          viewsCount: 4500,
+          favoritesCount: 210,
+          publishedAt: '2026-01-10T11:00:00Z',
+          expiresAt: '2026-04-10T11:00:00Z',
+          media: [
+            {
+              id: 'med_5_1',
+              listingId: 'lst_5',
+              mediaType: 'image',
+              url: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80',
+              isPrimary: true,
+              title: 'واجهة المبنى التجاري',
+            },
+          ],
+          createdAt: '2026-01-08T10:00:00Z',
+          updatedAt: '2026-01-10T11:00:00Z',
+        },
+      },
+      // Listing in Pending Verification
+      {
+        prop: {
+          id: 'prp_6',
+          city: 'الرياض',
+          district: 'الياسمين',
+          propertyType: 'villa',
+          totalAreaSqm: 380,
+          latitude: 24.815,
+          longitude: 46.65,
+          addressDescription: 'حي الياسمين، مربع 15 بالقرب من طريق الملك عبدالعزيز',
+          deedNumber: '310103344556',
+        },
+        list: {
+          id: 'lst_6',
+          propertyId: 'prp_6',
+          property: null as any,
+          ownerId: 'usr_adv_1',
+          ownerName: 'سعود بن عبدالملك العتيبي',
+          ownerPhone: '+966552223344',
+          title: 'فيلا مودرن درج صالة وشقة مستقلة بحي الياسمين',
+          description: 'فيلا مميزة مع شقة استثمارية بمدخل خاص، بناء شخصي بإشراف هندسي وضمانات كاملة على السباكة والعزل.',
+          purpose: 'sale',
+          price: 4300000,
+          currency: 'SAR',
+          roomsCount: 5,
+          bathroomsCount: 6,
+          floorNumber: 3,
+          buildingAgeYears: 0,
+          facade: 'جنوبية',
+          streetWidthM: 15,
+          features: ['شقة مستقلة', 'غرفة خادمة', 'تكييف راكب', 'مصعد'],
+          adLicenseNumber: '7100099881',
+          licenseVerificationStatus: 'pending',
+          status: 'pending_verification',
+          isFeatured: false,
+          viewsCount: 42,
+          favoritesCount: 3,
+          media: [
+            {
+              id: 'med_6_1',
+              listingId: 'lst_6',
+              mediaType: 'image',
+              url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&q=80',
+              isPrimary: true,
+              title: 'واجهة فيلا الياسمين',
+            },
+          ],
+          createdAt: '2026-02-18T10:00:00Z',
+          updatedAt: '2026-02-18T10:00:00Z',
+        },
+      },
+      // Listing in Draft
+      {
+        prop: {
+          id: 'prp_7',
+          city: 'الدمام',
+          district: 'الفيصلية',
+          propertyType: 'apartment',
+          totalAreaSqm: 140,
+          latitude: 26.415,
+          longitude: 50.08,
+          addressDescription: 'الدمام حي الفيصلية خلف سيتي ماكس',
+          deedNumber: '510108889991',
+        },
+        list: {
+          id: 'lst_7',
+          propertyId: 'prp_7',
+          property: null as any,
+          ownerId: 'usr_adv_1',
+          ownerName: 'سعود بن عبدالملك العتيبي',
+          ownerPhone: '+966552223344',
+          title: 'شقة عائلية مجددة للإيجار السنوي بالفيصلية (مسودة)',
+          description: 'شقة واسعة بالدور الأول، مجددة دهانات وسباكة، تتكون من 3 غرف وصالة ومطبخ راكب.',
+          purpose: 'rent',
+          rentPeriod: 'monthly',
+          price: 2800,
+          currency: 'SAR',
+          roomsCount: 3,
+          bathroomsCount: 2,
+          floorNumber: 1,
+          buildingAgeYears: 4,
+          facade: 'شمالية',
+          streetWidthM: 15,
+          features: ['مطبخ راكب', 'مواقف مظللة'],
+          adLicenseNumber: '',
+          licenseVerificationStatus: 'not_requested',
+          status: 'draft',
+          isFeatured: false,
+          viewsCount: 0,
+          favoritesCount: 0,
+          media: [],
+          createdAt: '2026-02-20T08:00:00Z',
+          updatedAt: '2026-02-20T08:00:00Z',
+        },
+      },
+    ];
+
+    seedListings.forEach((item) => {
+      item.list.property = item.prop;
+      this.properties.set(item.prop.id, item.prop);
+      this.listings.set(item.list.id, item.list);
+
+      // Track history
+      this.listingHistory.push({
+        id: `his_${item.list.id}_init`,
+        listingId: item.list.id,
+        fromStatus: 'draft',
+        toStatus: item.list.status,
+        reason: item.list.status === 'published' ? 'تم اعتماد الإعلان ونشره بعد التحقق من ترخيص الهيئة العامة للعقار' : 'إنشاء أولي',
+        changedByUserId: 'usr_mod_1',
+        changedByName: 'منى بنت سليمان التميمي',
+        createdAt: item.list.createdAt,
+      });
+    });
+
+    // 4. Real Estate Projects & Units
+    const proj1: Project = {
+      id: 'prj_1',
+      developerName: 'شركة روشن العقارية',
+      name: 'مشروع سدرة - المرحلة الثانية',
+      city: 'الرياض',
+      district: 'قرطبة',
+      description:
+        'مجتمع متكامل يمزج بين التراث السلماني الحديث والاستدامة، يضم أكثر من 2,000 وحدة سكنية بين فلل وشقق وتاون هاوس محاطة بالحدائق ومسارات المشاة والمدارس.',
+      status: 'under_construction',
+      unitsTotal: 340,
+      priceStartsFrom: 890000,
+      imageUrl: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&q=80',
+      handoverDate: 'الربع الرابع 2026',
+      features: ['حدائق مركزية', 'مدارس ومساجد', 'مراكز تسوق', 'مسارات دراجات', 'إدارة مجتمعية ذكية'],
+    };
+    this.projects.set(proj1.id, proj1);
+
+    const units1: ProjectUnit[] = [
+      { id: 'unt_1_1', projectId: 'prj_1', unitNumber: 'A-102', unitType: 'شقة 3 غرف', areaSqm: 145, rooms: 3, price: 890000, status: 'available' },
+      { id: 'unt_1_2', projectId: 'prj_1', unitNumber: 'B-205', unitType: 'تاون هاوس', areaSqm: 240, rooms: 4, price: 1650000, status: 'reserved' },
+      { id: 'unt_1_3', projectId: 'prj_1', unitNumber: 'V-012', unitType: 'فيلا مستقلة', areaSqm: 380, rooms: 5, price: 2850000, status: 'available' },
+      { id: 'unt_1_4', projectId: 'prj_1', unitNumber: 'V-014', unitType: 'فيلا مستقلة', areaSqm: 380, rooms: 5, price: 2890000, status: 'sold' },
+    ];
+    units1.forEach((u) => this.projectUnits.set(u.id, u));
+
+    const proj2: Project = {
+      id: 'prj_2',
+      developerName: 'الشركة الوطنية للإسكان (NHC)',
+      name: 'ضاحية الفرسان - فلل الأرجوان',
+      city: 'الرياض',
+      district: 'الفرسان',
+      description: 'أكبر ضاحية سكنية متكاملة في شمال شرق الرياض، تقدم حلولاً سكنية عصرية ومستدامة مدعومة ببرامج الدعم السكني.',
+      status: 'off_plan',
+      unitsTotal: 580,
+      priceStartsFrom: 750000,
+      imageUrl: 'https://images.unsplash.com/photo-1512915922686-57c11dde9b6b?w=1200&q=80',
+      handoverDate: 'الربع الثاني 2027',
+      features: ['ممشى رياضي بطول 6 كم', 'مرافق صحية', 'ألياف بصرية ذكية', 'قرب من المطار'],
+    };
+    this.projects.set(proj2.id, proj2);
+
+    const units2: ProjectUnit[] = [
+      { id: 'unt_2_1', projectId: 'prj_2', unitNumber: 'F-11', unitType: 'فيلا مودرن', areaSqm: 310, rooms: 4, price: 1200000, status: 'available' },
+      { id: 'unt_2_2', projectId: 'prj_2', unitNumber: 'F-12', unitType: 'فيلا مودرن', areaSqm: 310, rooms: 4, price: 1200000, status: 'available' },
+    ];
+    units2.forEach((u) => this.projectUnits.set(u.id, u));
+
+    // 5. Promotion Packages
+    this.promotionPackages = [
+      {
+        id: 'pkg_basic',
+        name: 'باقة الظهور المتقدم',
+        tier: 'basic',
+        durationDays: 7,
+        basePrice: 199,
+        badgeText: 'متقدم',
+        features: ['ظهور في أعلى نتائج البحث التلقائي', 'وسم إعلان متقدم بلون مميز', 'تنبيه المستخدمين المهتمين في الحي', 'تقرير تفصيلي بعدد المشاهدات اليومية'],
+      },
+      {
+        id: 'pkg_pro',
+        name: 'باقة الترويج المميز (Pro)',
+        tier: 'pro',
+        durationDays: 14,
+        basePrice: 399,
+        badgeText: 'مميز ★',
+        features: [
+          'تثبيت في الصفحة الرئيسية للمنصة',
+          'وسم مميز ذهبي لافت للانتباه',
+          'مضاعفة المشاهدات بنسبة تصل إلى 4 أضعاف',
+          'إرسال إشعار فوري لمتابعي الحي',
+          'شامل الفاتورة الضريبية ZATCA',
+        ],
+      },
+      {
+        id: 'pkg_star',
+        name: 'باقة النخبة العقارية (VIP)',
+        tier: 'premium_star',
+        durationDays: 30,
+        basePrice: 799,
+        badgeText: 'VIP ماسي',
+        features: [
+          'الصدارة في نتائج البحث والصفحة الأولى طوال 30 يوماً',
+          'نشر مخصص عبر قنوات ومنصات التواصل للمنصة',
+          'شارة "عقار الأسبوع المختار"',
+          'مدير حساب وساطة مخصص لدعم الإعلان',
+          'فحص ترخيص مستعجل ذو أولوية فائقة',
+        ],
+      },
+    ];
+
+    // 6. Seed Payment Order & Invoices
+    const ord1: PaymentOrder = {
+      id: 'ord_1001',
+      idempotencyKey: 'idem_ord_1001_seed',
+      userId: 'usr_adv_1',
+      userName: 'سعود بن عبدالملك العتيبي',
+      listingId: 'lst_1',
+      listingTitle: 'فيلا مودرن فاخرة مع مسبح ومصعد بحي الملقا',
+      packageId: 'pkg_pro',
+      packageName: 'باقة الترويج المميز (Pro)',
+      amount: 399,
+      taxAmount: 59.85,
+      totalAmount: 458.85,
+      currency: 'SAR',
+      paymentMethod: 'mada',
+      status: 'paid',
+      paymentGatewayRef: 'PAY-MADA-89412098',
+      createdAt: '2026-02-01T09:45:00Z',
+      paidAt: '2026-02-01T09:46:12Z',
+    };
+    this.paymentOrders.set(ord1.id, ord1);
+
+    const inv1: Invoice = {
+      id: 'inv_1001',
+      invoiceNumber: 'INV-2026-00412',
+      paymentOrderId: 'ord_1001',
+      userId: 'usr_adv_1',
+      customerName: 'سعود بن عبدالملك العتيبي',
+      customerTaxNo: '300099881100003',
+      subtotal: 399,
+      taxAmount: 59.85,
+      total: 458.85,
+      currency: 'SAR',
+      zatcaStatus: 'compliant',
+      items: [
+        {
+          description: 'باقة الترويج المميز (Pro) - إعلان رقم #lst_1 لمدة 14 يوماً',
+          quantity: 1,
+          unitPrice: 399,
+          total: 399,
+        },
+      ],
+      createdAt: '2026-02-01T09:46:15Z',
+    };
+    this.invoices.set(inv1.id, inv1);
+
+    // 7. Seed Report Case
+    const rep1: ReportCase = {
+      id: 'rep_1',
+      referenceNo: 'REP-2026-7841',
+      listingId: 'lst_3',
+      listingTitle: 'قصر مصغر بإطلالة بحرية وتشطيبات فائقة الفخامة بحي الشاطئ',
+      reporterUserId: 'usr_reg_1',
+      reporterContact: '+966501112233',
+      reasonType: 'wrong_price',
+      description: 'السعر المعروض بالمتر غير مطابق لمتوسطات السوق الحيّة، يرجى التحقق من صك الملكية وصلاحية تفويض الوسيط.',
+      status: 'under_investigation',
+      createdAt: '2026-02-12T14:30:00Z',
+    };
+    this.reports.set(rep1.id, rep1);
+
+    // 8. Seed Support Ticket
+    const tkt1: SupportTicket = {
+      id: 'tkt_1',
+      ticketNumber: 'TCK-2026-0912',
+      userId: 'usr_adv_1',
+      userName: 'سعود بن عبدالملك العتيبي',
+      subject: 'استفسار عن ربط رخصة فال العقارية الجديدة بحساب المعلن',
+      priority: 'medium',
+      status: 'in_progress',
+      messages: [
+        {
+          id: 'msg_1',
+          senderId: 'usr_adv_1',
+          senderName: 'سعود بن عبدالملك العتيبي',
+          text: 'السلام عليكم، قمت بتجديد رخصة فال للإعلانات وأرغب في تحديث رقم الرخصة لتفعيل الإعلان رقم #lst_6.',
+          createdAt: '2026-02-18T11:00:00Z',
+        },
+        {
+          id: 'msg_2',
+          senderId: 'usr_sup_1',
+          senderName: 'فريق الدعم الفني (ريم العمري)',
+          text: 'وعليكم السلام ورحمة الله، تم استلام طلبك وجاري التحقق المباشر من منصة الهيئة وتحديث بيانات حسابك خلال 24 ساعة.',
+          createdAt: '2026-02-18T11:45:00Z',
+        },
+      ],
+      createdAt: '2026-02-18T11:00:00Z',
+      updatedAt: '2026-02-18T11:45:00Z',
+    };
+    this.tickets.set(tkt1.id, tkt1);
+
+    // 9. Initial Favorites & Saved Searches for user Ahmed
+    this.favorites.push({
+      id: 'fav_1',
+      userId: 'usr_reg_1',
+      listingId: 'lst_1',
+      createdAt: '2026-02-15T18:00:00Z',
+    });
+
+    this.savedSearches.push({
+      id: 'sch_1',
+      userId: 'usr_reg_1',
+      title: 'فلل شمال الرياض (الملقا والنرجس)',
+      criteria: {
+        city: 'الرياض',
+        purpose: 'sale',
+        propertyType: 'villa',
+        maxPrice: 6000000,
+      },
+      notifyEnabled: true,
+      createdAt: '2026-02-10T15:00:00Z',
+    });
+
+    // 10. Market Indicators (Real methodology grounded in Saudi market indices)
+    this.marketIndicators = [
+      {
+        id: 'ind_1',
+        city: 'الرياض',
+        district: 'الملقا',
+        propertyType: 'villa',
+        purpose: 'sale',
+        avgPricePerSqm: 8450,
+        quarterlyChangePercent: 4.8,
+        totalTransactionsRecorded: 1420,
+        source: 'مؤشرات الصفقات الموثقة - الهيئة العامة للعقار',
+        lastUpdated: '2026-02-01',
+      },
+      {
+        id: 'ind_2',
+        city: 'الرياض',
+        district: 'النرجس',
+        propertyType: 'apartment',
+        purpose: 'rent',
+        avgPricePerSqm: 520,
+        quarterlyChangePercent: 6.2,
+        totalTransactionsRecorded: 2890,
+        source: 'منصة إيجار الموحدة - وزارة البلديات والإسكان',
+        lastUpdated: '2026-02-05',
+      },
+      {
+        id: 'ind_3',
+        city: 'جدة',
+        district: 'الشاطئ',
+        propertyType: 'villa',
+        purpose: 'sale',
+        avgPricePerSqm: 9800,
+        quarterlyChangePercent: -1.2,
+        totalTransactionsRecorded: 630,
+        source: 'بيانات التداول العقاري بالبورصة العقارية - وزارة العدل',
+        lastUpdated: '2026-01-28',
+      },
+      {
+        id: 'ind_4',
+        city: 'الخبر',
+        district: 'الحزام الذهبي',
+        propertyType: 'apartment',
+        purpose: 'sale',
+        avgPricePerSqm: 5600,
+        quarterlyChangePercent: 3.1,
+        totalTransactionsRecorded: 810,
+        source: 'المؤشر العقاري السكني بالمنطقة الشرقية',
+        lastUpdated: '2026-02-10',
+      },
+    ];
+
+    // 11. Initial Audit Events
+    this.recordAuditEvent({
+      userId: 'usr_adm_1',
+      userRole: 'system_admin',
+      userName: 'عبدالرحمن بن حمود الحربي',
+      eventType: 'SYSTEM_BOOTSTRAP',
+      entityName: 'system',
+      entityId: 'global',
+      details: 'تهيئة بيئة التشغيل المتكاملة لمنصة عقار وتفعيل محركات التدقيق والتراخيص',
+      ipAddress: '127.0.0.1',
+    });
+  }
+
+  // --- Helper Methods & ACID Transactions ---
+
+  public recordAuditEvent(data: Omit<AuditEvent, 'id' | 'createdAt'>): AuditEvent {
+    const event: AuditEvent = {
+      id: `aud_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      createdAt: new Date().toISOString(),
+      ...data,
+    };
+    this.auditEvents.unshift(event);
+    return event;
+  }
+
+  public getListingWithProperty(id: string): Listing | undefined {
+    const listing = this.listings.get(id);
+    if (!listing) return undefined;
+    const property = this.properties.get(listing.propertyId);
+    return { ...listing, property: property || listing.property };
+  }
+
+  public getAllListingsWithProperties(): Listing[] {
+    const list: Listing[] = [];
+    for (const l of this.listings.values()) {
+      const prop = this.properties.get(l.propertyId) || l.property;
+      list.push({ ...l, property: prop });
+    }
+    return list;
+  }
+}
+
+export const db = new InMemoryDatabase();

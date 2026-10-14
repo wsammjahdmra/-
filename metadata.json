@@ -1,0 +1,8 @@
+{
+  "name": "Remix منصة العقار الاحترافية",
+  "description": "نظام عقاري متكامل مبني بـ Laravel، يغطي دورة حياة المشروع بالكامل من التحليل والتصميم وحتى النشر والتشغيل الفعلي.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
