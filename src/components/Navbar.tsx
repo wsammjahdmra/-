@@ -13,6 +13,9 @@ import {
   Briefcase,
   Layers,
   Heart,
+  Calendar,
+  MessageSquare,
+  Grid,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useSettings } from '../context/SettingsContext';
@@ -113,16 +116,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onNavigate }) => {
                   currentTab === 'home' ? 'bg-slate-100 text-emerald-800 font-bold' : 'hover:bg-slate-50'
                 }`}
               >
-                الرئيسية
-              </button>
-              <button
-                onClick={() => handleNav('search')}
-                className={`px-3 py-2 rounded-xl transition-all flex items-center gap-1.5 ${
-                  currentTab === 'search' ? 'bg-slate-100 text-emerald-800 font-bold' : 'hover:bg-slate-50'
-                }`}
-              >
-                <Search className="w-4 h-4 text-emerald-600" />
-                البحث والعقارات
+                الخريطة والإعلانات
               </button>
               <button
                 onClick={() => handleNav('projects')}
@@ -134,14 +128,33 @@ export const Navbar: React.FC<NavbarProps> = ({ currentTab, onNavigate }) => {
                 المشاريع
               </button>
               <button
-                onClick={() => handleNav('market')}
+                onClick={() => handleNav('bookings')}
                 className={`px-3 py-2 rounded-xl transition-all flex items-center gap-1.5 ${
-                  currentTab === 'market' ? 'bg-slate-100 text-emerald-800 font-bold' : 'hover:bg-slate-50'
+                  currentTab === 'bookings' ? 'bg-slate-100 text-emerald-800 font-bold' : 'hover:bg-slate-50'
                 }`}
               >
-                <TrendingUp className="w-4 h-4 text-slate-500" />
-                المؤشرات السوقية
+                <Calendar className="w-4 h-4 text-slate-500" />
+                الحجوزات
               </button>
+              <button
+                onClick={() => handleNav('chats')}
+                className={`px-3 py-2 rounded-xl transition-all flex items-center gap-1.5 ${
+                  currentTab === 'chats' ? 'bg-slate-100 text-emerald-800 font-bold' : 'hover:bg-slate-50'
+                }`}
+              >
+                <MessageSquare className="w-4 h-4 text-slate-500" />
+                المحادثات
+              </button>
+              <button
+                onClick={() => handleNav('services')}
+                className={`px-3 py-2 rounded-xl transition-all flex items-center gap-1.5 ${
+                  currentTab === 'services' ? 'bg-slate-100 text-emerald-800 font-bold' : 'hover:bg-slate-50'
+                }`}
+              >
+                <Grid className="w-4 h-4 text-slate-500" />
+                الخدمات
+              </button>
+
 
               {role !== 'visitor' && (
                 <button

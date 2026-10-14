@@ -9,6 +9,8 @@ import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
+import { BottomNavBar } from './components/BottomNavBar';
+import { RoleSwitcherModal } from './components/RoleSwitcherModal';
 
 // Pages
 import { HomePage } from './pages/HomePage';
@@ -31,16 +33,30 @@ import { AdminFinancePage } from './pages/AdminFinancePage';
 import { AdminUsersPage } from './pages/AdminUsersPage';
 import { AdminAuditPage } from './pages/AdminAuditPage';
 import { AdminSettingsPage } from './pages/AdminSettingsPage';
+import { BookingsPage } from './pages/BookingsPage';
+import { ChatsPage } from './pages/ChatsPage';
+import { ServicesHubPage } from './pages/ServicesHubPage';
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState<string>('home');
   const [tabParam, setTabParam] = useState<string>('');
   const [selectedListingId, setSelectedListingId] = useState<string>('lst_1');
   const [selectedProjectId, setSelectedProjectId] = useState<string>('prj_1');
+  const [roleModalOpen, setRoleModalOpen] = useState(false);
+  const [quotaExceeded, setQuotaExceeded] = useState(false);
 
-  // Scroll to top on navigation
+  // Quota Exceeded event listener for Google Maps Platform
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const handleQuota = () => setQuotaExceeded(true);
+    window.addEventListener('gmp-quota-exceeded', handleQuota);
+    return () => window.removeEventListener('gmp-quota-exceeded', handleQuota);
+  }, []);
+
+  // Scroll to top on navigation except home map
+  useEffect(() => {
+    if (currentTab !== 'home') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, [currentTab, selectedListingId, selectedProjectId]);
 
   const handleNavigate = (tab: string, param?: string) => {
@@ -81,7 +97,7 @@ export default function App() {
         return (
           <ListingDetailsPage
             listingId={selectedListingId}
-            onBack={() => setCurrentTab('search')}
+            onBack={() => setCurrentTab('home')}
             onSelectListing={handleSelectListing}
           />
         );
@@ -96,6 +112,20 @@ export default function App() {
             onBack={() => setCurrentTab('projects')}
           />
         );
+
+      case 'bookings':
+        return (
+          <BookingsPage
+            onSelectListing={handleSelectListing}
+            onNavigateHome={() => setCurrentTab('home')}
+          />
+        );
+
+      case 'chats':
+        return <ChatsPage onSelectListing={handleSelectListing} />;
+
+      case 'services':
+        return <ServicesHubPage onNavigate={handleNavigate} />;
 
       case 'market':
         return <MarketInsightsPage />;
@@ -202,10 +232,43 @@ export default function App() {
     <SettingsProvider>
       <AuthProvider>
         <ToastProvider>
-          <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans antialiased selection:bg-emerald-600 selection:text-white">
+          <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans antialiased selection:bg-emerald-600 selection:text-white pb-14">
+            {/* Google Maps Quota Defense Sticky Top Banner */}
+            {quotaExceeded && (
+              <div className="bg-amber-50 border-b border-amber-200 text-amber-900 px-4 py-2.5 text-xs md:text-sm text-center sticky top-0 z-50 shadow-sm">
+                <span>
+                  Google Maps Platform quota reached. If you are the app owner, visit{' '}
+                  <a
+                    href="https://developers.google.com/maps/ai/ai-studio?utm_campaign=gmp_mcp_codeassist_v1_aistudio#quota_exceeded_errors"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline font-semibold text-amber-950 hover:text-amber-800"
+                  >
+                    maps developer site
+                  </a>{' '}
+                  for instructions to update your account.
+                </span>
+              </div>
+            )}
+
             <Navbar currentTab={currentTab} onNavigate={handleNavigate} />
-            <main className="flex-1">{renderContent()}</main>
-            <Footer onNavigate={handleNavigate} />
+            
+            <main className="flex-1 flex flex-col">{renderContent()}</main>
+
+            {currentTab !== 'home' && <Footer onNavigate={handleNavigate} />}
+
+            {/* Mobile / Screen Bottom Navigation Bar matching screenshot */}
+            <BottomNavBar
+              currentTab={currentTab}
+              onNavigate={handleNavigate}
+              onOpenAccount={() => setRoleModalOpen(true)}
+            />
+
+            {/* Role Switcher & Account Profile Modal */}
+            <RoleSwitcherModal
+              isOpen={roleModalOpen}
+              onClose={() => setRoleModalOpen(false)}
+            />
           </div>
         </ToastProvider>
       </AuthProvider>

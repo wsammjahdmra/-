@@ -66,7 +66,10 @@ export type PropertyType =
   | 'building'
   | 'office'
   | 'floor'
+  | 'chalet'
+  | 'shop'
   | 'warehouse';
+
 
 export interface Property {
   id: string;
